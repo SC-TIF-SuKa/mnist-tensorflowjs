@@ -1,5 +1,9 @@
 import {MnistData} from './data.js';
-var canvas, ctx, saveButton, clearButton;
+var ctx;
+var canvas = document.getElementById("canvas");
+var saveButton = document.getElementById("sb");
+var clearButton = document.getElementById("cb");
+var appTitle = document.getElementById("app-title")
 var pos = {x:0, y:0};
 var rawImage;
 var model;
@@ -86,9 +90,18 @@ function save() {
     
 	alert(pIndex);
 }
+
+function appOnTraining() {
+	canvas.classList.add("canvas--disabled");
+	saveButton.disabled = true;
+	saveButton.classList.add("button--disabled");
+	clearButton.disabled = true;
+	clearButton.classList.add("button--disabled");
+	document.title = "train the model...";
+	appTitle.innerText = "Training the model, Please wait...";
+}
     
 function init() {
-	canvas = document.getElementById('canvas');
 	rawImage = document.getElementById('canvasimg');
 	ctx = canvas.getContext("2d");
 	ctx.fillStyle = "black";
@@ -96,14 +109,19 @@ function init() {
 	canvas.addEventListener("mousemove", draw);
 	canvas.addEventListener("mousedown", setPosition);
 	canvas.addEventListener("mouseenter", setPosition);
-	saveButton = document.getElementById('sb');
+	canvas.classList.remove("canvas--disabled");
 	saveButton.addEventListener("click", save);
-	clearButton = document.getElementById('cb');
+	saveButton.disabled = false;
+	saveButton.classList.remove("button--disabled");
 	clearButton.addEventListener("click", erase);
+	clearButton.disabled = false;
+	clearButton.classList.remove("button--disabled");
+	document.title = "mnist-tf ready!";
+	appTitle.innerText = "Handwriting Classifier!";
 }
 
-
-async function run() {  
+async function run() {
+	appOnTraining();  
 	const data = new MnistData();
 	await data.load();
 	const model = getModel();
